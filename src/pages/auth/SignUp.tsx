@@ -25,14 +25,14 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("User Data:", formData);
+    // console.log("User Data:", formData);
 
     // Later you will send this data to backend
     
       try {
-          const response = await axios.post("http://localhost:5000/api/auth/register", formData);
+          const response = await axios.post("https://food-magic-backend.onrender.com/api/auth/register", formData);
           console.log(response);
-          alert(response.data.message);
+          alert("Signup Successfull");
       } catch (error: unknown) {
 
           if (axios.isAxiosError(error)) {
