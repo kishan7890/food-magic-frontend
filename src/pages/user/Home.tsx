@@ -12,22 +12,53 @@ type Restaurant = {
 const Home = () => {
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
     const fetchRestaurants = async () => {
 
-      const res = await axios.get(
-        "https://food-magic-backend.onrender.com/api/restaurants"
-      );
-      // console.log(res.data);
-      setRestaurants(res.data);
+     try {
+
+        const res = await axios.get(
+          "https://food-magic-backend.onrender.com/api/restaurants"
+        );
+
+        setRestaurants(res.data);
+
+      } catch (err) {
+
+        console.log(err);
+
+      } finally {
+
+        setLoading(false);
+
+      }
 
     };
 
     fetchRestaurants();
 
   }, []);
+
+   // Loading UI
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="flex flex-col items-center gap-4">
+          
+          {/* Spinner */}
+          <div className="w-14 h-14 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+
+          <p className="text-gray-600 text-lg font-medium">
+            Loading Restaurants...
+          </p>
+
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
