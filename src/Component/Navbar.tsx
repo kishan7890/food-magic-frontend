@@ -1,6 +1,6 @@
-
 import { useContext, useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
+
 import {
   Menu,
   X,
@@ -22,9 +22,15 @@ const Navbar = () => {
   const { user, logout } = useContext(AuthContext)
   const { cart } = useContext(CartContext)
 
-  const [open, setOpen] = useState(false)
+  // ================= STATES =================
 
-  const menuRef = useRef<HTMLDivElement | null>(null)
+  const [desktopOpen, setDesktopOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  // ================= REFS =================
+
+  const desktopMenuRef = useRef<HTMLDivElement | null>(null)
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null)
 
   // ================= CART COUNT =================
 
@@ -44,18 +50,27 @@ const Navbar = () => {
 
     const handleClickOutside = (event: MouseEvent) => {
 
+      // Desktop
       if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node)
+        desktopMenuRef.current &&
+        !desktopMenuRef.current.contains(event.target as Node)
       ) {
-        setOpen(false)
+        setDesktopOpen(false)
+      }
+
+      // Mobile
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
+        setMobileOpen(false)
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("click", handleClickOutside)
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("click", handleClickOutside)
     }
 
   }, [])
@@ -93,10 +108,12 @@ const Navbar = () => {
           </Link>
 
           {/* CART */}
+
           <Link
             to="/cart"
             className="relative hover:text-green-600 transition"
           >
+
             Cart
 
             {cartCount > 0 && (
@@ -104,43 +121,31 @@ const Navbar = () => {
                 {cartCount}
               </span>
             )}
+
           </Link>
 
-          {/* ================= PROFILE + MENU ================= */}
+          {/* ================= DESKTOP PROFILE ================= */}
 
-          <div className="relative" ref={menuRef}>
+          <div className="relative" ref={desktopMenuRef}>
 
             <button
-              onClick={() => setOpen(!open)}
+              onClick={() => setDesktopOpen(!desktopOpen)}
               className="flex items-center gap-3"
             >
 
-              {/* AVATAR */}
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-green-500">
-
-                {user?.email ? (
-                  <img
-                    src={user.email}
-                    alt="profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <User size={18} />
-                  </div>
-                )}
-
+              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border-2 border-green-500">
+                <User size={18} />
               </div>
 
-              {open ? <X /> : <Menu />}
+              {desktopOpen ? <X /> : <Menu />}
 
             </button>
 
-            {/* ================= DROPDOWN ================= */}
+            {/* ================= DESKTOP DROPDOWN ================= */}
 
             <AnimatePresence>
 
-              {open && (
+              {desktopOpen && (
 
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -154,15 +159,17 @@ const Navbar = () => {
                     <>
 
                       <div className="border-b pb-3 mb-3">
+
                         <p className="font-semibold text-gray-800">
                           {user.email}
                         </p>
+
                       </div>
 
                       <Link
                         to="/profile"
                         className="flex items-center gap-2 py-2 hover:text-green-600"
-                        onClick={() => setOpen(false)}
+                        onClick={() => setDesktopOpen(false)}
                       >
                         <User size={18} />
                         Profile
@@ -171,7 +178,7 @@ const Navbar = () => {
                       <Link
                         to="/my-orders"
                         className="flex items-center gap-2 py-2 hover:text-green-600"
-                        onClick={() => setOpen(false)}
+                        onClick={() => setDesktopOpen(false)}
                       >
                         <Package size={18} />
                         My Orders
@@ -180,7 +187,7 @@ const Navbar = () => {
                       <Link
                         to="/settings"
                         className="flex items-center gap-2 py-2 hover:text-green-600"
-                        onClick={() => setOpen(false)}
+                        onClick={() => setDesktopOpen(false)}
                       >
                         <Settings size={18} />
                         Settings
@@ -189,14 +196,17 @@ const Navbar = () => {
                       <Link
                         to="/accessibility"
                         className="flex items-center gap-2 py-2 hover:text-green-600"
-                        onClick={() => setOpen(false)}
+                        onClick={() => setDesktopOpen(false)}
                       >
                         <Accessibility size={18} />
                         Accessibility
                       </Link>
 
                       <button
-                        onClick={logout}
+                        onClick={() => {
+                          logout()
+                          setDesktopOpen(false)
+                        }}
                         className="w-full mt-4 bg-red-500 hover:bg-red-600 transition text-white py-2 rounded-xl"
                       >
                         Logout
@@ -209,7 +219,7 @@ const Navbar = () => {
                       <Link
                         to="/signup"
                         className="block py-2 hover:text-green-600"
-                        onClick={() => setOpen(false)}
+                        onClick={() => setDesktopOpen(false)}
                       >
                         Signup
                       </Link>
@@ -217,7 +227,7 @@ const Navbar = () => {
                       <Link
                         to="/signin"
                         className="block py-2 hover:text-green-600"
-                        onClick={() => setOpen(false)}
+                        onClick={() => setDesktopOpen(false)}
                       >
                         Sign In
                       </Link>
@@ -235,32 +245,20 @@ const Navbar = () => {
 
         </div>
 
-        {/* ================= MOBILE MENU BUTTON ================= */}
+        {/* ================= MOBILE MENU ================= */}
 
-        <div className="md:hidden" ref={menuRef}>
+        <div className="md:hidden relative" ref={mobileMenuRef}>
 
           <button
-            onClick={() => setOpen(!open)}
+            onClick={() => setMobileOpen(!mobileOpen)}
             className="flex items-center gap-3"
           >
 
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-green-500">
-
-              {user?.email? (
-                <img
-                  src={user.email}
-                  alt="profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <User size={18} />
-                </div>
-              )}
-
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border-2 border-green-500">
+              <User size={18} />
             </div>
 
-            {open ? <X /> : <Menu />}
+            {mobileOpen ? <X /> : <Menu />}
 
           </button>
 
@@ -268,14 +266,14 @@ const Navbar = () => {
 
           <AnimatePresence>
 
-            {open && (
+            {mobileOpen && (
 
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute right-4 mt-3 w-60 bg-white rounded-2xl shadow-xl p-4"
+                className="absolute right-0 mt-3 w-60 bg-white rounded-2xl shadow-xl p-4"
               >
 
                 {user ? (
@@ -288,7 +286,7 @@ const Navbar = () => {
                     <Link
                       to="/profile"
                       className="block py-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                     >
                       Profile
                     </Link>
@@ -296,7 +294,7 @@ const Navbar = () => {
                     <Link
                       to="/about"
                       className="block py-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                     >
                       About
                     </Link>
@@ -304,7 +302,7 @@ const Navbar = () => {
                     <Link
                       to="/my-orders"
                       className="block py-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                     >
                       My Orders
                     </Link>
@@ -312,7 +310,7 @@ const Navbar = () => {
                     <Link
                       to="/settings"
                       className="block py-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                     >
                       Settings
                     </Link>
@@ -320,13 +318,16 @@ const Navbar = () => {
                     <Link
                       to="/accessibility"
                       className="block py-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                     >
                       Accessibility
                     </Link>
 
                     <button
-                      onClick={logout}
+                      onClick={() => {
+                        logout()
+                        setMobileOpen(false)
+                      }}
                       className="w-full mt-3 bg-red-500 text-white py-2 rounded-xl"
                     >
                       Logout
@@ -339,7 +340,7 @@ const Navbar = () => {
                     <Link
                       to="/signup"
                       className="block py-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                     >
                       Signup
                     </Link>
@@ -347,7 +348,7 @@ const Navbar = () => {
                     <Link
                       to="/signin"
                       className="block py-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                     >
                       Sign In
                     </Link>
@@ -381,6 +382,7 @@ const Navbar = () => {
           to="/cart"
           className="relative flex flex-col items-center text-sm"
         >
+
           <ShoppingCart size={20} />
           Cart
 
@@ -407,16 +409,3 @@ const Navbar = () => {
 }
 
 export default Navbar
-
-
-
-
-
-
-
-{/* <Link to="/">🏠 Home</Link>
-        <Link to="/cart">🛒 Cart</Link>
-        <Link to="/orders">📦 Orders</Link>
-
-      </div>
-    </> */}
