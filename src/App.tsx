@@ -9,8 +9,14 @@ import Checkout from "./pages/user/CheckOutPage";
 import OrderSuccess from "./pages/user/OrderSccess";
 import AdminDashboard from "./pages/admin/adminDashboard";
 import Footer from "./Component/Footer";
+import { useLocation } from "react-router-dom"
 import './App.css'
 function App() {
+
+  const location = useLocation()
+
+  const hideNavbar =
+    location.pathname.startsWith("/admin")
 
   
 
@@ -19,7 +25,7 @@ function App() {
 
       {/* Navigation */}
       
-        <Navbar />
+        {!hideNavbar && <Navbar />}
 
       {/* Routes */}
       <Routes>
