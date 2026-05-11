@@ -39,12 +39,21 @@ const SignIn = () => {
     // Later you will send this data to backend
     
     try {
-      await login({
-        email: formData.email,
-        password: formData.password
-      });
+      const loggedInUser = await login({
+      email: formData.email,
+      password: formData.password
+    });
       
+      // ✅ role based navigation
+    if (loggedInUser.role === "restaurant") {
+
+      navigate("/admin");
+
+    } else {
+
       navigate("/");
+
+    }
           // console.log(response);
         //   alert(response.data.message);
       } catch (error: unknown) {

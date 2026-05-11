@@ -8,14 +8,20 @@ export type User = {
 
 export type AuthContextType = {
   user: User | null
-  login: (data: { email: string; password: string }) => Promise<void>
+  login: (data: { email: string; password: string }) => Promise<User>
   logout: () => Promise<void>
   loading: boolean
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: async () => {},
+  login: async () => {
+    return {
+      id: "",
+      email: "",
+      role: ""
+    }
+  },
   logout: async () => {},
   loading: false
 })

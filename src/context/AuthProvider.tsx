@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     setUser(res.data.user) 
     // console.log(res.data.user)
+    return res.data.user;
   }
 
   // ✅ logout
