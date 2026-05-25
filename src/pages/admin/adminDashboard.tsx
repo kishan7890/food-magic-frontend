@@ -17,11 +17,38 @@ import {
   X
 } from "lucide-react"
 
-import { useState } from "react"
+import { useState,useContext } from "react"
+
+import { AuthContext } from "../../context/AuthContext"
+
+import { Navigate } from "react-router-dom"
 
 const AdminDashboard = () => {
 
   const [mobileMenu, setMobileMenu] = useState(false)
+
+  const { user, loading } = useContext(AuthContext)
+
+  // ✅ Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <h1 className="text-2xl font-bold">
+          Loading...
+        </h1>
+      </div>
+    )
+  }
+
+  // ✅ Not logged in
+  if (!user) {
+    return <Navigate to="/signin" />
+  }
+
+  // ✅ Wrong role
+  if (user.role !== "restaurant") {
+    return <Navigate to="/" />
+  }
 
   return (
 
