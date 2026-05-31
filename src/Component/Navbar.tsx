@@ -11,6 +11,7 @@ import {
   Settings,
   Accessibility
 } from "lucide-react"
+import { LayoutDashboard } from "lucide-react"
 
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -106,6 +107,16 @@ const Navbar = () => {
           <Link className="hover:text-green-600 transition" to="/orders">
             Track Orders
           </Link>
+
+          {user?.role === "restaurant" && (
+            <Link
+              className="hover:text-green-600 transition flex items-center gap-2 font-medium text-green-600"
+              to="/admin"
+            >
+              <LayoutDashboard size={18} />
+              Admin
+            </Link>
+          )}
 
           {/* CART */}
 
@@ -377,6 +388,16 @@ const Navbar = () => {
           <House size={20} />
           Home
         </Link>
+
+        {user?.role === "restaurant" && (
+          <Link
+            to="/admin"
+            className="flex flex-col items-center text-sm text-green-600"
+          >
+            <LayoutDashboard size={20} />
+            Admin
+          </Link>
+        )}
 
         <Link
           to="/cart"
